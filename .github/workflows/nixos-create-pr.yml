@@ -18,8 +18,13 @@ jobs:
         repository: alexprivalov/nixpkgs
         path: nixpkgs
         ref: master
-    
+
+    # - name: Run tmate
+    #   uses: mxschmitt/action-tmate@v2
+
     - name: Setup nixpkgs repo
+      env:
+        GITHUB_TOKEN: ${{ secrets.PTA }}
       run: |
         set -x
         cd nixpkgs
