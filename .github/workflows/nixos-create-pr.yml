@@ -1,0 +1,46 @@
+name: Update Twingate in nixpkgs
+
+on:
+  workflow_dispatch:
+    inputs:
+      client_version:
+        description: 'Version of released linux client'
+        required: true
+
+jobs:
+  create_pr:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository nixpkgs repo
+      uses: actions/checkout@v3
+      with:
+        repository: alexprivalov/nixpkgs
+        path: nixpkgs
+        ref: master
+    
+    - name: Setup nixpkgs repo
+      run: |
+        set -x
+        cd nixpkgs
+        git fetch upstream
+        git remote add upstream https://github.com/NixOS/nixpkgs.git
+        git checkout master
+        git rebase upstream/master
+        git push -f origin master
+        git checkout -b twingate-${{ github.event.inputs.client_version }}
+        mkdir -p pkgs/applications/networking/twingate || true
+        wget https://binaries.twingate.com/client/linux/NIX/stable/twingate-default.nix -O pkgs/applications/networking/twingate/default.nix
+        wget https://binaries.twingate.com/client/linux/NIX/stable/twingate-module.nix -O nixos/modules/services/networking/twingate.nix
+    
+#    - name: Push branch
+#      run: |
+#        # Commit and push changes
+#        git add .
+#        git commit -m "Bump twingate client to ${{ github.event.inputs.client_version }}"
+#        git push origin twingate-${{ github.event.inputs.client_version }}
+#
+#    - name: Create pull request
+#      run: |
+#        # Create pull request
+#        hub pull-request -b alexprivalov:master -h <username>:feature-branch -m "Twingate: update to ${{ github.event.inputs.client_version }}"
