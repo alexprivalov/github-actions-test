@@ -19,8 +19,10 @@ jobs:
         path: nixpkgs
         ref: master
 
-    # - name: Run tmate
-    #   uses: mxschmitt/action-tmate@v2
+    - name: Run tmate
+      uses: mxschmitt/action-tmate@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.PTA }}
 
     - name: Setup nixpkgs repo
       env:
