@@ -18,11 +18,12 @@ jobs:
         repository: alexprivalov/nixpkgs
         path: nixpkgs
         ref: master
+        ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Run tmate
-      uses: mxschmitt/action-tmate@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.PTA }}
+    # - name: Run tmate
+    #   uses: mxschmitt/action-tmate@v2
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.PTA }}
 
     - name: Setup nixpkgs repo
       env:
