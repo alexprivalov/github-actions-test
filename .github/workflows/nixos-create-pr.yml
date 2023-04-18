@@ -40,6 +40,7 @@ jobs:
         git merge --ff-only upstream/master
         git push
         git checkout -b twingate-${{ github.event.inputs.client_version }}
+        echo "client version - ${client_version}"
         mkdir -p pkgs/applications/networking/twingate || true
         wget https://binaries.twingate.com/client/linux/NIX/stable/twingate-default.nix -O pkgs/applications/networking/twingate/default.nix
         wget https://binaries.twingate.com/client/linux/NIX/stable/twingate-module.nix -O nixos/modules/services/networking/twingate.nix
