@@ -49,6 +49,10 @@ jobs:
         mkdir -p pkgs/applications/networking/twingate || true
         wget https://binaries.twingate.com/client/linux/NIX/stable/twingate-default.nix -O pkgs/applications/networking/twingate/default.nix
         wget https://binaries.twingate.com/client/linux/NIX/stable/twingate-module.nix -O nixos/modules/services/networking/twingate.nix
+
+        git config --global user.email "ochupryna@twingate.com"
+        git config --global user.name "Oleksandr Chupryna"
+
         # Commit and push changes
         git add .
         git commit -m "Bump twingate client to ${{ github.event.inputs.client_version }}"
