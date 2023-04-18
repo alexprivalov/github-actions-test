@@ -18,6 +18,7 @@ jobs:
         repository: alexprivalov/nixpkgs
         path: nixpkgs
         ref: master
+        fetch-depth: 0
         ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     # - name: Run tmate
@@ -31,11 +32,13 @@ jobs:
       run: |
         set -x
         cd nixpkgs
-        git remote add upstream https://github.com/NixOS/nixpkgs.git
-        git fetch upstream
+        git remote add -f upstream "https://github.com/NixOS/nixpkgs.git"
+        git remote -v
+        git branch --all
+        git config --list
         git checkout master
-        git rebase upstream/master
-        git push -f origin master
+        git merge --ff-only upstream/master
+        git push
         git checkout -b twingate-${{ github.event.inputs.client_version }}
         mkdir -p pkgs/applications/networking/twingate || true
         wget https://binaries.twingate.com/client/linux/NIX/stable/twingate-default.nix -O pkgs/applications/networking/twingate/default.nix
