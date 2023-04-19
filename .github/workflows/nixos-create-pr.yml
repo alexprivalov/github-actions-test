@@ -47,7 +47,7 @@ jobs:
         cd nixpkgs
         OLD_VER=$(cat pkgs/applications/networking/twingate/default.nix | grep "version =" | cut -d '=' -f2 | tr -d '\" ;' | cut -d '+' -f1)
         git checkout -b twingate-${{ github.event.inputs.client_version }}
-        echo "new client version - ${client_version}, old one - ${OLD_VER}"
+        echo "new client version - ${{ github.event.inputs.client_version }}, old one - ${OLD_VER}"
         mkdir -p pkgs/applications/networking/twingate || true
         wget https://binaries.twingate.com/client/linux/NIX/stable/twingate-default.nix -O pkgs/applications/networking/twingate/default.nix
         wget https://binaries.twingate.com/client/linux/NIX/stable/twingate-module.nix -O nixos/modules/services/networking/twingate.nix
@@ -61,6 +61,8 @@ jobs:
         git push origin twingate-${{ github.event.inputs.client_version }}
 
     - name: Create pull request
+      env:
+        GITHUB_TOKEN: ${{ secrets.PTA }}
       run: |
         set -x
         # Create pull request
