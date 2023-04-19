@@ -27,13 +27,13 @@ jobs:
     #     GITHUB_TOKEN: ${{ secrets.PTA }}
 
     - name: Sync fork of nixpkgs repo
-      id: vars
       env:
         GITHUB_TOKEN: ${{ secrets.PTA }}
       run: |
         set -x
         cd nixpkgs
-        git remote add -f upstream "https://github.com/NixOS/nixpkgs.git"
+#        git remote add -f upstream "https://github.com/NixOS/nixpkgs.git"
+        git remote add -f upstream "https://github.com/Twingate/nixpkgs.git"
         git remote -v
         git branch --all
         git config --list
@@ -42,6 +42,7 @@ jobs:
         git push
     
     - name: Create and push branch with new *.nix files
+      id: vars
       run: |
         set -x
         cd nixpkgs
@@ -66,8 +67,7 @@ jobs:
       run: |
         set -x
         # Create pull request
-        mv nixpkgs ..
-        cd ../nixpkgs
+        cd nixpkgs
         sed -i 's/\[ \] x86_64-linux/\[X\] x86_64-linux/g' .github/PULL_REQUEST_TEMPLATE.md
         sed -i 's/\[ \] Fits/\[X\] Fits/g' .github/PULL_REQUEST_TEMPLATE.md
         gh pr create -R twingate/nixpkgs -t "twingate client: ${{ steps.vars.outputs.OLD_VER }} -> ${{ github.event.inputs.client_version }}" -F .github/PULL_REQUEST_TEMPLATE.md -H alexprivalov:twingate-${{ github.event.inputs.client_version }}
