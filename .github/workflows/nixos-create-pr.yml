@@ -19,7 +19,7 @@ jobs:
         path: nixpkgs
         ref: master
         fetch-depth: 0
-        ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        token: ${{ secrets.PTA }}
 
     # - name: Run tmate
     #   uses: mxschmitt/action-tmate@v2
