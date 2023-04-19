@@ -42,11 +42,12 @@ jobs:
         git push
 
     - name: Create and push branch with new *.nix files
-      id: vars
+      id: step_create_and_push
       run: |
         set -x
         cd nixpkgs
         OLD_VER=$(cat pkgs/applications/networking/twingate/default.nix | grep "version =" | cut -d '=' -f2 | tr -d '\" ;' | cut -d '+' -f1)
+        echo "OLD_VER=${OLD_VER}" >> $GITHUB_ENV
         git checkout -b twingate-${{ github.event.inputs.client_version }}
         echo "new client version - ${{ github.event.inputs.client_version }}, old one - ${OLD_VER}"
         mkdir -p pkgs/applications/networking/twingate || true
@@ -70,4 +71,4 @@ jobs:
         cd nixpkgs
         sed -i 's/\[ \] x86_64-linux/\[X\] x86_64-linux/g' .github/PULL_REQUEST_TEMPLATE.md
         sed -i 's/\[ \] Fits/\[X\] Fits/g' .github/PULL_REQUEST_TEMPLATE.md
-        gh pr create -R twingate/nixpkgs -t "twingate client: ${{ steps.vars.outputs.OLD_VER }} -> ${{ github.event.inputs.client_version }}" -F .github/PULL_REQUEST_TEMPLATE.md -H alexprivalov:twingate-${{ github.event.inputs.client_version }}
+        gh pr create -R twingate/nixpkgs -t "twingate client: ${{ env.OLD_VER }} -> ${{ github.event.inputs.client_version }}" -F .github/PULL_REQUEST_TEMPLATE.md -H alexprivalov:twingate-${{ github.event.inputs.client_version }}
