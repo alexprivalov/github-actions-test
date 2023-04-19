@@ -10,7 +10,7 @@ on:
 jobs:
   create_pr:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout repository nixpkgs repo
       uses: actions/checkout@v3
@@ -32,7 +32,7 @@ jobs:
       run: |
         set -x
         cd nixpkgs
-#        git remote add -f upstream "https://github.com/NixOS/nixpkgs.git"
+        # git remote add -f upstream "https://github.com/NixOS/nixpkgs.git"
         git remote add -f upstream "https://github.com/Twingate/nixpkgs.git"
         git remote -v
         git branch --all
@@ -40,7 +40,7 @@ jobs:
         git checkout master
         git merge --ff-only upstream/master
         git push
-    
+
     - name: Create and push branch with new *.nix files
       id: vars
       run: |
