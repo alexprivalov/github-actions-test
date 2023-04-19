@@ -27,6 +27,7 @@ jobs:
     #     GITHUB_TOKEN: ${{ secrets.PTA }}
 
     - name: Sync fork of nixpkgs repo
+      id: vars
       env:
         GITHUB_TOKEN: ${{ secrets.PTA }}
       run: |
@@ -44,8 +45,9 @@ jobs:
       run: |
         set -x
         cd nixpkgs
+        OLD_VER=$(cat pkgs/applications/networking/twingate/default.nix | grep "version =" | cut -d '=' -f2 | tr -d '\" ;' | cut -d '+' -f1)
         git checkout -b twingate-${{ github.event.inputs.client_version }}
-        echo "client version - ${client_version}"
+        echo "new client version - ${client_version}, old one - ${OLD_VER}"
         mkdir -p pkgs/applications/networking/twingate || true
         wget https://binaries.twingate.com/client/linux/NIX/stable/twingate-default.nix -O pkgs/applications/networking/twingate/default.nix
         wget https://binaries.twingate.com/client/linux/NIX/stable/twingate-module.nix -O nixos/modules/services/networking/twingate.nix
@@ -55,10 +57,14 @@ jobs:
 
         # Commit and push changes
         git add .
-        git commit -m "Bump twingate client to ${{ github.event.inputs.client_version }}"
+        git commit -m "twingate client: ${OLD_VER} -> ${{ github.event.inputs.client_version }}"
         git push origin twingate-${{ github.event.inputs.client_version }}
-#
-#    - name: Create pull request
-#      run: |
-#        # Create pull request
-#        hub pull-request -b alexprivalov:master -h <username>:feature-branch -m "Twingate: update to ${{ github.event.inputs.client_version }}"
+
+    - name: Create pull request
+      run: |
+        set -x
+        # Create pull request
+        cd nixpkgs
+        sed -i 's/\[ \] x86_64-linux/\[X\] x86_64-linux/g' .github/PULL_REQUEST_TEMPLATE.md
+        sed -i 's/\[ \] Fits/\[X\] Fits/g' .github/PULL_REQUEST_TEMPLATE.md
+        gh pr create -R twingate/nixpkgs -t "twingate client: ${{ steps.vars.outputs.OLD_VER }} -> ${{ github.event.inputs.client_version }}" -F .github/PULL_REQUEST_TEMPLATE.md
